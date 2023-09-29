@@ -1,0 +1,4 @@
+logging:
+  level:
+    root: ${LOGLEVEL:WARN}
+    org.springframework.data.neo4j.cypher: ${BOLT_REQUEST_LOGLEVEL:DEBUG}

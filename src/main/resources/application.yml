@@ -2,3 +2,9 @@ logging:
   level:
     root: ${LOGLEVEL:WARN}
     org.springframework.data.neo4j.cypher: ${BOLT_REQUEST_LOGLEVEL:DEBUG}
+spring:
+  neo4j:
+    authentication:
+      username: neo4j
+      password: verysecret
+    uri: bolt://localhost:7687

@@ -49,6 +49,7 @@ class DemoApplicationTests {
     @AfterEach
     fun tearDown() {
         countAndPrintDebugLogs("teardown", true)
+        System.setOut(originalStream)
     }
 
     private fun resetOutput() {
@@ -58,14 +59,17 @@ class DemoApplicationTests {
     private fun countAndPrintDebugLogs(description: String, printLogs: Boolean = this.printLogs) {
         val text = ByteArrayInputStream(outputStream.toByteArray()).bufferedReader().readText()
         val logs = ByteArrayInputStream(outputStream.toByteArray()).bufferedReader().readLines()
-        System.setOut(originalStream)
-        if (printLogs) println("QUERIES: \n$text")
-        println("$description -> queries: ${logs.count { it.contains(" DEBUG ") }}")
-        println("------------------------------")
-        originalStream.flush()
-        outputStream.flush()
-        outputStream.reset()
-        System.setOut(printStream)
+        try {
+            System.setOut(originalStream)
+            if (printLogs) println("QUERIES: \n$text")
+            println("$description -> queries: ${logs.count { it.contains(" DEBUG ") }}")
+            println("------------------------------")
+            originalStream.flush()
+            outputStream.flush()
+            outputStream.reset()
+        } finally {
+            System.setOut(printStream)
+        }
     }
 
     @Test
@@ -103,7 +107,7 @@ class DemoApplicationTests {
 
         // projection is filled fully when custom query is used (@Query antruenotation)
         val projectionCustomQuery = userService.findProjectionCustomQuery(organizationId.toString(), siriId.toString())
-        countAndPrintDebugLogs("find user using projection and custom query", )
+        countAndPrintDebugLogs("find user using projection and custom query")
         println("using projection with custom query: ${string(projectionCustomQuery!!)}")
         string(projection) shouldBe string(projectionCustomQuery)
     }
